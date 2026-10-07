@@ -8,7 +8,8 @@ This snap bundles the following third-party components:
   Provided by Xiaomi MiMo under the MIT license (see LICENSE-mimo-v2-6).
   Model card: https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B
   GGUF conversion: https://huggingface.co/ggml-org/MiMo-V2.6-Distill-Qwen-9B-GGUF
-  The model is a fine-tune of Qwen3.5-9B (https://huggingface.co/Qwen/Qwen3.5-9B).
+  The model is a fine-tune of Qwen3.5-9B by the Qwen team (Alibaba Cloud),
+  licensed under the Apache License 2.0 (https://huggingface.co/Qwen/Qwen3.5-9B).
 
 * llama.cpp (https://github.com/ggml-org/llama.cpp), MIT license.
   License texts are installed under usr/share/doc/llama.cpp and usr/share/doc/llama.cpp-cuda.
