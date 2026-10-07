@@ -1,0 +1,261 @@
+name: mimo-v2-6
+title: MiMo V2.6
+summary: Local AI with MiMo V2.6 inference snap
+description: |
+  MiMo-V2.6-Distill-Qwen-9B is a 9B multimodal agentic model developed by Xiaomi MiMo through supervised fine-tuning of Qwen3.5-9B on MiMo-generated data. It covers coding, general-purpose agent tasks, visual coding, and cybersecurity.
+
+  Use this snap to quickly install an optimized environment for local inference with MiMo V2.6.
+
+  The snap includes the following hardware-optimized inference engines:
+
+  * cpu: Optimized for x64 and ARM (armv8, armv9) CPUs
+  * nvidia-gpu: CUDA-enabled GPU acceleration
+
+  The most suitable engine is automatically selected based on the available hardware.
+
+  **Install:**
+
+  `sudo snap install mimo-v2-6`
+
+  **Run:**
+
+  `mimo-v2-6`
+
+  Some accelerators require extra drivers to be usable with this snap:
+  https://documentation.ubuntu.com/inference-snaps/how-to/setup/drivers/
+
+  **License:**
+
+  The MiMo V2.6 model is provided by Xiaomi MiMo under the MIT license:
+  https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B
+
+  The licenses of all the bundled software can be found after installing the snap at
+  `/snap/mimo-v2-6/current/usr/share/doc`.
+
+website: https://documentation.ubuntu.com/inference-snaps
+source-code: https://github.com/canonical/mimo-v2.6-snap
+issues: https://github.com/canonical/inference-snaps/issues
+
+adopt-info: version
+
+base: core24
+grade: stable
+confinement: strict
+compression: lzo
+
+assumes:
+  - snapd2.68
+
+platforms:
+  amd64:
+  arm64:
+
+environment:
+  SNAP_COMPONENTS: /snap/$SNAP_INSTANCE_NAME/components/$SNAP_REVISION
+  ARCH_TRIPLET: $CRAFT_ARCH_TRIPLET_BUILD_FOR
+
+plugs:
+  # To allow sideloading models by root
+  home:
+    read: all
+
+slots:
+  provider:
+    interface: content
+    content: inference-provider
+    source:
+      read:
+        - $SNAP_COMMON/share/provider
+
+hooks:
+  install:
+    plugs: &install-plugs
+      - hardware-observe
+      - opengl
+  post-refresh:
+    plugs: *install-plugs
+
+components:
+  model-9b-q8-0-gguf-1-of-2: &model
+    type: standard
+    summary: MiMo-V2.6-Distill-Qwen-9B Q8_0 GGUF model weights
+    description: |
+      Part of the MiMo-V2.6-Distill-Qwen-9B model weights, quantized to Q8_0 in GGUF format.
+      The model is split into 2 parts; all parts are required.
+
+  model-9b-q8-0-gguf-2-of-2:
+    <<: *model
+
+  mmproj-9b-q8-0-gguf:
+    type: standard
+    summary: MiMo-V2.6-Distill-Qwen-9B Q8_0 vision projector
+    description: Multimodal projector for MiMo-V2.6-Distill-Qwen-9B in GGUF format, enabling image input.
+
+  llamacpp:
+    type: standard
+    summary: llama.cpp CPU runtime
+    description: Optimized llama.cpp inference runtime for CPUs
+
+  llamacpp-cuda:
+    type: standard
+    summary: llama.cpp CUDA runtime
+    description: llama.cpp inference runtime with CUDA acceleration for NVIDIA GPUs
+
+apps:
+  mimo-v2-6:
+    command: bin/modelctl
+    completer: bin/snap-completer.bash
+    plugs:
+      - hardware-observe
+      - opengl
+      - network
+      - desktop # To open the webui in the browser
+    environment:
+      ADDITIONAL_FEATURES: chat, webui
+
+  server:
+    command: bin/server.sh
+    daemon: simple
+    plugs:
+      - network-bind
+      - hardware-observe
+      - opengl
+      - home
+
+  server-webui:
+    command: bin/server-webui.sh
+    daemon: simple
+    plugs:
+      - network-bind
+
+parts:
+  version:
+    after: [cli]
+    plugin: nil
+    source: . # To regenerate the git hash on every change
+    build-packages:
+      - jq
+      - git
+    override-pull: |
+      # Do nothing. This significantly reduces build time when sourcing large files.
+    override-build: |
+      set -eo pipefail
+      cli_version=$($CRAFT_STAGE/bin/modelctl version --format=json | jq .cli --raw-output)
+      git_hash=$(git -C "$SNAPCRAFT_PROJECT_DIR" describe --always)
+      craftctl set version="${cli_version#v}+${git_hash}"
+
+  cli:
+    source:
+      - on amd64: https://github.com/canonical/inference-snaps-cli/releases/download/v2.0.0-beta.14/inference-snaps-cli-linux-amd64.tar.xz
+      - on arm64: https://github.com/canonical/inference-snaps-cli/releases/download/v2.0.0-beta.14/inference-snaps-cli-linux-arm64.tar.xz
+    plugin: dump
+    override-build: |
+
+      # For tab completion
+      ln --symbolic ./modelctl bin/mimo-v2-6
+
+      craftctl default
+
+  cli-dependencies:
+    plugin: nil
+    stage-packages:
+      - pciutils # lspci
+
+  # Minimal nvidia-smi for NVIDIA GPU detection
+  cli-nvidia-smi:
+    plugin: nil
+    stage-packages:
+      - nvidia-utils-580
+    prime:
+      - usr/bin/nvidia-smi
+      - usr/share/doc/nvidia-utils-580/copyright
+
+  webui:
+    plugin: dump
+    source: https://github.com/canonical/inference-snaps-webui/releases/download/v1.1.0/inference-snaps-webui.tar.xz
+    organize:
+      "*": webui/
+
+  engines:
+    source: engines
+    plugin: dump
+    organize:
+      "*": engines/
+
+  models:
+    source: models
+    plugin: dump
+    organize:
+      "*": models/
+
+  runtimes:
+    source: runtimes
+    plugin: dump
+    organize:
+      "*": runtimes/
+
+  scripts:
+    source: scripts
+    plugin: dump
+    stage-packages:
+      - jq
+    organize:
+      "server.sh": bin/
+      "server-webui.sh": bin/
+
+  local-component-files:
+    plugin: cmake
+    source: components
+    override-build: |
+      cp -rf --archive --link --no-dereference ${CRAFT_PART_SRC}/* ${CRAFT_PART_INSTALL}
+    organize:
+      "model-9b-q8-0-gguf-1-of-2/*": (component/model-9b-q8-0-gguf-1-of-2)
+      "model-9b-q8-0-gguf-2-of-2/*": (component/model-9b-q8-0-gguf-2-of-2)
+      "mmproj-9b-q8-0-gguf/*": (component/mmproj-9b-q8-0-gguf)
+    prime:
+      - -* # exclude everything not explicitly organized
+
+  llamacpp:
+    plugin: dump
+    source:
+      - on amd64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-amd64.tar.gz
+      - on arm64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-arm64.tar.gz
+    override-build: |
+      # Move license files to be included in the snap, not the component
+      mkdir -p $CRAFT_PRIME/usr/share/doc/
+      mv licenses $CRAFT_PRIME/usr/share/doc/llama.cpp
+
+      craftctl default
+    stage-packages:
+      - libgomp1
+    organize:
+      # move everything, including the staged packages
+      "*": (component/llamacpp)
+
+  llamacpp-cuda:
+    plugin: dump
+    source:
+      - on amd64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-amd64+cuda12.9.tar.gz
+      - on arm64: https://github.com/canonical/llama.cpp-builds/releases/download/b9611/llamacpp-arm64+cuda12.9.tar.gz
+    override-build: |
+      # Move license files to be included in the snap, not the component
+      mkdir -p $CRAFT_PRIME/usr/share/doc/
+      mv licenses $CRAFT_PRIME/usr/share/doc/llama.cpp-cuda
+
+      craftctl default
+    stage-packages:
+      - libgomp1
+    organize:
+      # move everything, including the staged packages
+      "*": (component/llamacpp-cuda)
+
+  notice:
+    plugin: nil
+    source: NOTICE
+    source-type: file
+    override-build: |
+      license_dir=$CRAFT_PART_INSTALL/usr/share/doc
+      mkdir -p $license_dir
+      cp NOTICE $license_dir/
+      cp $SNAPCRAFT_PROJECT_DIR/LICENSE $license_dir/
+      cp $SNAPCRAFT_PROJECT_DIR/LICENSE-mimo-v2-6 $license_dir/

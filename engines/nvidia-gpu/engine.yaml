@@ -1,0 +1,19 @@
+name: nvidia-gpu
+summary: CUDA-enabled GPU acceleration
+description: llama.cpp inference with CUDA acceleration on NVIDIA GPUs
+vendor: Canonical Ltd
+devices:
+  allof:
+    - type: gpu
+      vendor-id: 0x10de # NVIDIA Corporation
+
+runtime: llamacpp-cuda
+
+model:
+  default: mimo-v2.6-distill-qwen-9b
+  options:
+    - mimo-v2.6-distill-qwen-9b
+
+configurations:
+  sleep-idle-seconds: 600
+  min-context-size: 4096
