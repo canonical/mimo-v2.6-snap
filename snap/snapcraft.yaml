@@ -203,9 +203,9 @@ parts:
       "server.sh": bin/
       "server-webui.sh": bin/
 
-  local-component-files:
+  model-weights:
     plugin: cmake
-    source: components
+    source: model-weights
     override-build: |
       cp -rf --archive --link --no-dereference ${CRAFT_PART_SRC}/* ${CRAFT_PART_INSTALL}
     organize:

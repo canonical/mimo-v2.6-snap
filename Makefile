@@ -62,11 +62,11 @@ download-models: download-model-9b download-mmproj-9b
 download-model-9b:
 	@echo "Downloading MiMo-V2.6-Distill-Qwen-9B model weights..."
 	$(hf) download inference-snaps/MiMo-V2.6-Distill-Qwen-9B-Q8_0-5GB MiMo-V2.6-Distill-Qwen-9B-Q8_0-00001-of-00002.gguf \
-		--local-dir components/model-9b-q8-0-gguf-1-of-2/
+		--local-dir model-weights/model-9b-q8-0-gguf-1-of-2/
 	$(hf) download inference-snaps/MiMo-V2.6-Distill-Qwen-9B-Q8_0-5GB MiMo-V2.6-Distill-Qwen-9B-Q8_0-00002-of-00002.gguf \
-		--local-dir components/model-9b-q8-0-gguf-2-of-2/
+		--local-dir model-weights/model-9b-q8-0-gguf-2-of-2/
 
 download-mmproj-9b:
 	@echo "Downloading MiMo-V2.6-Distill-Qwen-9B mmproj weights..."
 	$(hf) download ggml-org/MiMo-V2.6-Distill-Qwen-9B-GGUF mmproj-MiMo-V2.6-Distill-Qwen-9B-Q8_0.gguf \
-		--local-dir components/mmproj-9b-q8-0-gguf/
+		--local-dir model-weights/mmproj-9b-q8-0-gguf/
