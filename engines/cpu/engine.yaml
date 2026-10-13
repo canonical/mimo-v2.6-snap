@@ -1,0 +1,21 @@
+name: cpu
+summary: Optimized for x64 and ARM (armv8, armv9) CPUs
+description: llama.cpp inference on x64 and ARM CPUs
+vendor: Canonical Ltd
+devices:
+  anyof:
+    - type: cpu
+      architecture: amd64
+    - type: cpu
+      architecture: arm64
+
+runtime: llamacpp
+
+model:
+  default: mimo-v2.6-distill-qwen-9b
+  options:
+    - mimo-v2.6-distill-qwen-9b
+
+configurations:
+  sleep-idle-seconds: 600
+  min-context-size: 4096
