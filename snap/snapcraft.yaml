@@ -1,6 +1,7 @@
 name: mimo-v2-6
 title: MiMo V2.6
 summary: Local AI with MiMo V2.6 inference snap
+icon: snap/gui/icon-256.png
 description: |
   MiMo V2.6 is family of multimodal AI models developed by Xiaomi MiMo, engineered to deliver high-performance local intelligence.
   
