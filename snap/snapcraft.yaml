@@ -2,7 +2,9 @@ name: mimo-v2-6
 title: MiMo V2.6
 summary: Local AI with MiMo V2.6 inference snap
 description: |
-  MiMo-V2.6-Distill-Qwen-9B is a 9B multimodal agentic model developed by Xiaomi MiMo through supervised fine-tuning of Qwen3.5-9B on MiMo-generated data. It covers coding, general-purpose agent tasks, visual coding, and cybersecurity.
+  MiMo V2.6 is a model family developed by Xiaomi MiMo. This snap currently includes only MiMo-V2.6-Distill-Qwen-9B, 
+  a 9B multimodal agentic model created through supervised fine-tuning of Qwen3.5-9B on MiMo-generated data. It covers coding, 
+  general-purpose agent tasks, visual coding, and cybersecurity.
 
   Use this snap to quickly install an optimized environment for local inference with MiMo V2.6.
 
@@ -26,8 +28,7 @@ description: |
 
   **License:**
 
-  The MiMo V2.6 model is provided by Xiaomi MiMo under the MIT license:
-  https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B
+  The MiMo V2.6 model is provided by Xiaomi MiMo under the MIT license.
 
   The licenses of all the bundled software can be found after installing the snap at
   `/snap/mimo-v2-6/current/usr/share/doc`.
