@@ -1,7 +1,7 @@
 name: mimo-v2.6-distill-qwen-9b
 
 description: MiMo-V2.6-Distill-Qwen-9B, a 9B multimodal agentic model by Xiaomi MiMo (Q8_0 GGUF)
-model-card-url: https://huggingface.co/ggml-org/MiMo-V2.6-Distill-Qwen-9B-GGUF
+model-card-url: https://huggingface.co/inference-snaps/MiMo-V2.6-Distill-Qwen-9B-Q8_0-5GB
 format: GGUF
 quantization: Q8_0
 
